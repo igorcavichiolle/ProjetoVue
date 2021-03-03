@@ -33,11 +33,17 @@ namespace ProjectSchool_API
                 (Configuration.GetConnectionString("DefaultConnection"))
                 );
 
-            services.AddControllers();
+            services.AddControllers()
+                    .AddNewtonsoftJson(options=> 
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                    
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectSchool_API", Version = "v1" });
             });
+
+            // Toda vez que for solicitado o IRepository(interface) como parametro para algum construtor, implementaremos o Repositoty como injeção de Dependencias
+            services.AddScoped<IRepository, Respository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
