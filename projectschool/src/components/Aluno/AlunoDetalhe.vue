@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!loading">
     <Titulo :texto="`Aluno: ${aluno.nome}`" :btnVoltar="true">
       <button class="btn btnEditar" @click="habilitarInput()">
         Editar
@@ -46,11 +46,11 @@
           <td class="colPequeno">Professor:</td>
           <td>
             <label v-if="habilitaCampo"> {{ aluno.professor.nome }} </label>
-            <select v-else v-model="aluno.professor">
+            <select v-else v-model="aluno.professor.id">
               <option
                 v-for="(professor, index) in professores"
                 :key="index"
-                v-bind:value="professor"
+                v-bind:value="professor.id"
               >
                 {{ professor.nome }}
               </option>
@@ -81,40 +81,52 @@ export default {
       aluno: {},
       id: this.$route.params.id,
       habilitaCampo: true,
+      loading: true,
     };
   },
   created() {
-    this.$http
-      //pegando apenas os alunos do id do professor da variavel professorid
-      .get("http://localhost:3000/alunos/" + this.id)
-      .then((res) => res.json())
-      .then((aluno) => (this.aluno = aluno));
-
-    this.$http
-      .get("http://localhost:3000/professores")
-      .then((res) => res.json())
-      .then((professor) => {
-        this.professores = professor;
-      });
+    this.carregarProfessor();
   },
   methods: {
+    carregarProfessor() {
+      this.$http
+        .get("http://localhost:5000/api/professor")
+        .then(res => res.json())
+        .then(professor => {
+          this.professores = professor;
+          // Depois que carregar o professor carregaremos o aluno
+          this.carregarAluno();
+        });
+    },
+    carregarAluno() {
+      this.$http
+        //pegando apenas os alunos do id do professor da variavel professorid
+        .get(`http://localhost:5000/api/aluno/${this.id}`)
+        .then(res => res.json())
+        .then(aluno => {
+          this.aluno = aluno;
+          // agora minha variavel vai ser false e a página será carregada
+          this.loading = false;
+        });
+    },
     habilitarInput() {
       this.habilitaCampo = false;
     },
-    salvar() {
+    salvar(_aluno) {
       let _alunoEditar = {
-        id: this.aluno.id,
-        nome: this.aluno.nome,
-        sobrenome: this.aluno.sobrenome,
-        dataNasc: this.aluno.dataNasc,
-        professor: this.aluno.professor,
+        id: _aluno.id,
+        nome: _aluno.nome,
+        sobrenome: _aluno.sobrenome,
+        dataNasc: _aluno.dataNasc,
+        professorid: _aluno.professor.id,
       };
 
       //SEMELHANTE AO POST PASSAMOS UM .PUT COM A URL DA API, O ID DO ALUNO QUE ESTAMOS EDITANDO E O CONTEUDOP DO OBJETO _ALUNOEDITAR
-      this.$http.put(
-        `http://localhost:3000/alunos/${_alunoEditar.id}`,
-        _alunoEditar
-      );
+      this.$http
+        .put(`http://localhost:5000/api/aluno/${_alunoEditar.id}`, _alunoEditar)
+        .then(res => res.json())
+        .then(aluno => this.aluno = aluno)
+        .then(() => this.habilitaCampo = true);
 
       this.habilitaCampo = true;
     },

@@ -44,6 +44,9 @@ namespace ProjectSchool_API
 
             // Toda vez que for solicitado o IRepository(interface) como parametro para algum construtor, implementaremos o Repositoty como injeção de Dependencias
             services.AddScoped<IRepository, Respository>();
+
+            //Utilizando o CORS na aplicação
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +65,9 @@ namespace ProjectSchool_API
 
             app.UseAuthorization();
 
+            //Resolvendo problema de erro ao fazer a requisição permissão de CORS
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+ 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
