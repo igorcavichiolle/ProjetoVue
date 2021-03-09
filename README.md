@@ -14,7 +14,7 @@ Neste projeto temos o cadastro de professores e alunos, cada professor tem reala
 ![image](https://user-images.githubusercontent.com/48020517/110473639-85fc2280-80bd-11eb-87ed-1e0636dfa5bc.png)
 
 **Front-end**
-Desenvolvido com VUE.js fazendo requisiçõe4s HTTP para a API
+Desenvolvido com VUE.js fazendo requisições HTTP para a API
 
 **Back-end**
-WebApi desenvolvida com ASP.NET Core Web API, Entity framework core e banco de dados SQLite, recebe as requisições HTTP feitas pelo site via json, trata os dados e insere no banco de dados SQLite
+WebApi desenvolvida com ASP.NET Core, Entity framework core e banco de dados SQLite, recebe as requisições HTTP feitas pelo site via json, trata os dados e insere no banco de dados SQLite
